@@ -1,15 +1,20 @@
 doctype html
+
 html(lang="en") 
   head
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title #{title}
     link(rel="stylesheet" href="/styles.css")
+    block metadata
   body
-    nav
+    nav.navbar
         a(href="/") Inicio
         a(href="/publicaciones") Publicaciones
         a(href="/login") Iniciar sesión
-    header
-    main
+    header.header
+    main.main-content
+      block head
       block content
+    hr
+    footer.footer
+        p 2026 Fotaza - Proyecto ULP - Web II-  Todos los derechos reservados a Godoy Dario.

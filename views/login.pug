@@ -1,54 +1,26 @@
-doctype html
-html(lang="es")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    title FotoApp - Login y Registro
-    style.
-      body {font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0;}
-      .page {min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;}
-      .box {width: 100%; max-width: 440px; background: #fff; border-radius: 16px; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08); overflow: hidden;}
-      .header {background: #26427c; color: #fff; padding: 28px 32px;}
-      .header h1 {margin: 0 0 8px; font-size: 1.8rem;}
-      .header p {margin: 0; color: #e6e9f5;}
-      .form-container {padding: 28px 32px 32px;}
-      .section-title {margin: 0 0 18px; color: #222; font-size: 1.1rem;}
-      .form-group {margin-bottom: 16px;}
-      .form-group label {display: block; margin-bottom: 8px; color: #333; font-weight: 600;}
-      .form-group input {width: 100%; padding: 12px 14px; border: 1px solid #d5d9e2; border-radius: 10px; font-size: 0.95rem;}
-      .btn {width: 100%; padding: 13px; border: none; border-radius: 10px; background: #26427c; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer;}
-      .separator {text-align: center; margin: 22px 0; color: #8b95a1; font-size: 0.95rem;}
-      .small {font-size: 0.95rem; color: #5a6070; text-align: center; margin-top: 14px;}
-      .small a {color: #26427c; text-decoration: none; font-weight: 600;}
-  body
-    .page
-      .box
-        .header
-          h1 Fotaza 
-          p Una plataforma para compartir tus mejores fotos con amigos.
-        .form-container
-          form(action="/login" method="post")
-            p.section-title Inicia sesión
-            .form-group
-              label(for="loginEmail") Correo electrónico
-              input(type="email" id="loginEmail" name="email" placeholder="tucorreo@ejemplo.com" required)
-            .form-group
-              label(for="loginPassword") Contraseña
-              input(type="password" id="loginPassword" name="password" placeholder="Contraseña" required)
-            button.btn(type="submit") Iniciar sesión
-          .separator o regístrate
-          form(action="/register" method="post")
-            p.section-title Crea tu cuenta
-            .form-group
-              label(for="name") Nombre completo
-              input(type="text" id="name" name="name" placeholder="Tu nombre" required)
-            .form-group
-              label(for="registerEmail") Correo electrónico
-              input(type="email" id="registerEmail" name="email" placeholder="tucorreo@ejemplo.com" required)
-            .form-group
-              label(for="registerPassword") Contraseña
-              input(type="password" id="registerPassword" name="password" placeholder="Contraseña" required)
-            button.btn(type="submit") Registrarse
-          p.small
-            | ¿Ya tienes cuenta? 
-            a(href="#login") Inicia sesión ahora
+extends layout.pug
+
+block head
+  link(rel="stylesheet" href="/stylesAuth.css")
+    
+
+block content
+  .login-container
+    h1 Fotaza
+    p Una plataforma para compartir tus mejores fotos con amigos.
+    form(action="/login" method="post")
+      p.section-title Inicia sesión
+      .form-group
+        label(for="loginEmail") Correo electrónico
+        input(type="email" id="loginEmail" name="email" placeholder="tucorreo@ejemplo.com" required)
+      .form-group
+        label(for="loginPassword") Contraseña
+        input(type="password" id="loginPassword" name="password" placeholder="Contraseña" required)
+      button.btn-login(type="submit") Iniciar sesión
+    .login-footer
+      p.small
+        | ¿No tienes cuenta?
+        a(href="/register") Registrate
+    hr
+    p.error-message#formError
+      | Ocurrió un error. Intenta nuevamente.

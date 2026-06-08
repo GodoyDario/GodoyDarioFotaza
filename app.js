@@ -16,7 +16,10 @@ app.set("views", "./views");
 
 //Rutas
 app.get("/", (req, res) => {
-    res.render("app", { title: "Fotaza", message: "Bienvenido a Fotaza!" });
+    res.render("index", { title: "Fotaza", message: "Bienvenido a Fotaza!" });
+});
+app.get("/login", (req, res) => {
+    res.render("login", { title: "Iniciar Sesión" });
 });
 
 //Servidor

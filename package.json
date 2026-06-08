@@ -1,0 +1,19 @@
+{
+  "name": "godoydariofotaza",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "author": "Godoy Dario",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "17.4.2",
+    "pug": "3.0.4",
+    "xpress": "2.4.6"
+  }
+}

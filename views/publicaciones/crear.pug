@@ -1,0 +1,44 @@
+extends ../layout.pug
+
+block content
+  .publicaciones-container
+    h1 Crear publicación
+
+    if error
+      p.error-message= error
+
+    form(action="/publicaciones/crear" method="post" enctype="multipart/form-data")
+      .form-group
+        label(for="titulo") Título
+        input(type="text" id="titulo" name="titulo" placeholder="Título de la publicación" required)
+
+      .form-group
+        label(for="descripcion") Descripción (opcional)
+        textarea(id="descripcion" name="descripcion" placeholder="Describí tu publicación..." rows="3")
+
+      .form-group
+        label(for="imagenes") Imágenes (podés subir varias)
+        input(type="file" id="imagenes" name="imagenes" accept="image/*" multiple required)
+
+      .form-group
+        label(for="licencia") Licencia
+        select(id="licencia" name="licencia")
+          option(value="sin_copyright") Sin copyright (pública)
+          option(value="copyright") Con copyright (protegida)
+
+      .form-group#grupo-marca-agua(style="display:none")
+        label(for="marca_agua") Texto de marca de agua
+        input(type="text" id="marca_agua" name="marca_agua" placeholder="Ej: © Tu nombre 2026")
+
+      .form-group
+        label(for="etiquetas") Etiquetas (separadas por coma)
+        input(type="text" id="etiquetas" name="etiquetas" placeholder="Ej: naturaleza, viajes, arte")
+
+      button.btn-submit(type="submit") Publicar
+
+    script.
+      const licencia = document.getElementById('licencia');
+      const grupoMarca = document.getElementById('grupo-marca-agua');
+      licencia.addEventListener('change', () => {
+        grupoMarca.style.display = licencia.value === 'copyright' ? 'block' : 'none';
+      });

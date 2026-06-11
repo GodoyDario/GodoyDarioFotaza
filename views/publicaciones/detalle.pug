@@ -1,0 +1,62 @@
+extends ../layout.pug
+
+block content
+  .detalle-container
+    h1= publicacion.titulo
+    p
+      strong Autor: 
+      span= publicacion.autor.username
+
+    if publicacion.descripcion
+      p= publicacion.descripcion
+
+    .imagenes
+      each imagen in publicacion.imagenes
+        .imagen-item
+          img(src=imagen.url alt=publicacion.titulo)
+          p
+            strong Licencia: 
+            span= imagen.licencia
+          if imagen.dataValues.promedio
+            p
+              strong Valoración: 
+              span= imagen.dataValues.promedio + '/5 (' + imagen.dataValues.totalVotos + ' votos)'
+          else
+            p Sin valoraciones aún
+
+          if usuario && usuario.id !== publicacion.autor.id
+            form(action=`/publicaciones/imagen/${imagen.id}/valorar` method="post")
+              select(name="valor")
+                option(value="1") 1
+                option(value="2") 2
+                option(value="3") 3
+                option(value="4") 4
+                option(value="5") 5
+              button(type="submit") Valorar
+
+    if publicacion.etiquetas && publicacion.etiquetas.length > 0
+      p
+        strong Etiquetas: 
+        each etiqueta in publicacion.etiquetas
+          span.etiqueta= etiqueta.nombre + ' '
+
+    hr
+
+    h2 Comentarios
+    if publicacion.comentarios_abiertos
+      if usuario
+        form(action=`/publicaciones/${publicacion.id}/comentar` method="post")
+          textarea(name="texto" placeholder="Escribí un comentario..." rows="3" required)
+          button(type="submit") Comentar
+      else
+        p
+          a(href="/auth/login") Iniciá sesión 
+          |  para comentar
+
+    if publicacion.comentarios && publicacion.comentarios.length > 0
+      each comentario in publicacion.comentarios
+        .comentario
+          strong= comentario.autor.username
+          p= comentario.texto
+    else
+      p No hay comentarios aún.

@@ -1,20 +1,23 @@
 doctype html
-
-html(lang="en") 
+html(lang="es")
   head
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Fotaza
     link(rel="stylesheet" href="/styles.css")
-    block metadata
+    block head
   body
-    nav.navbar
-        a(href="/") Inicio
-        a(href="/publicaciones") Publicaciones
-        a(href="/login") Iniciar sesión
-    header.header
+    nav.nav
+      a(href="/") Inicio
+      if usuario
+        a(href="/publicaciones/crear") Publicar
+        a(href="/auth/logout") Cerrar sesión (#{usuario.username})
+      else
+        a(href="/auth/login") Iniciar sesión
+        a(href="/auth/registro") Registrarse
+
     main.main-content
-      block head
       block content
-    hr
+
     footer.footer
-        p 2026 Fotaza - Proyecto ULP - Web II-  Todos los derechos reservados a Godoy Dario.
+      p 2026 Fotaza - Proyecto ULP - Web II - Godoy Dario

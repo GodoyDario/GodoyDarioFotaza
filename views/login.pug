@@ -2,25 +2,26 @@ extends layout.pug
 
 block head
   link(rel="stylesheet" href="/stylesAuth.css")
-    
 
 block content
   .login-container
     h1 Fotaza
     p Una plataforma para compartir tus mejores fotos con amigos.
-    form(action="/login" method="post")
-      p.section-title Inicia sesión
+
+    if error
+      p.error-message= error
+
+    form(action="/auth/login" method="post")
+      p.section-title Iniciá sesión
       .form-group
-        label(for="loginEmail") Correo electrónico
-        input(type="email" id="loginEmail" name="email" placeholder="tucorreo@ejemplo.com" required)
+        label(for="username") Usuario o email
+        input(type="text" id="username" name="username" placeholder="Tu usuario o email" required)
       .form-group
-        label(for="loginPassword") Contraseña
-        input(type="password" id="loginPassword" name="password" placeholder="Contraseña" required)
+        label(for="password") Contraseña
+        input(type="password" id="password" name="password" placeholder="Contraseña" required)
       button.btn-login(type="submit") Iniciar sesión
+
     .login-footer
       p.small
-        | ¿No tienes cuenta?
-        a(href="/register") Registrate
-    hr
-    p.error-message#formError
-      | Ocurrió un error. Intenta nuevamente.
+        | ¿No tenés cuenta?
+        a(href="/auth/registro")  Registrate

@@ -40,6 +40,7 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'));
 app.use('/auth', require('./routes/auth'));
 app.use('/publicaciones', require('./routes/publicaciones'));
+app.use('/usuarios', require('./routes/usuarios'));
 
 // Puerto
 const PORT = process.env.PORT || 3000;

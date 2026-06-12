@@ -25,7 +25,7 @@ block content
             p= pub.descripcion
           p
             strong Autor: 
-            span= pub.autor.username
+            a(href=`/usuarios/${pub.autor.id}`)= pub.autor.username
           a(href=`/publicaciones/${pub.id}`) Ver detalles
   else
     if busqueda

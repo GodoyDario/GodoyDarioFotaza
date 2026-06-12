@@ -1,0 +1,33 @@
+extends ../layout.pug
+
+block content
+  .perfil-container
+    .perfil-header
+      h1= perfil.username
+      .perfil-stats
+        span
+          strong= seguidores
+          |  seguidores
+        span
+          strong= seguidos
+          |  seguidos
+
+      if usuario && usuario.id !== perfil.id
+        if yaSigue
+          form(action=`/usuarios/${perfil.id}/dejardeseguir` method="post")
+            button.btn-dejar-seguir(type="submit") Dejar de seguir
+        else
+          form(action=`/usuarios/${perfil.id}/seguir` method="post")
+            button.btn-seguir(type="submit") Seguir
+
+    h2 Publicaciones
+    if publicaciones && publicaciones.length > 0
+      .galeria
+        each pub in publicaciones
+          .tarjeta-foto
+            h3= pub.titulo
+            if pub.imagenes && pub.imagenes.length > 0
+              img(src=pub.imagenes[0].url alt=pub.titulo)
+            a(href=`/publicaciones/${pub.id}`) Ver detalles
+    else
+      p Este usuario no tiene publicaciones aún.

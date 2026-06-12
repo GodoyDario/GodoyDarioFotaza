@@ -9,32 +9,37 @@ exports.guardarPublicacion = async (req, res) => {
   try {
     const { titulo, descripcion, licencia, marca_agua, etiquetas } = req.body;
     const usuario_id = req.session.usuario.id;
+    const cloudinary = require('../config/cloudinary');
 
     if (!req.files || req.files.length === 0) {
       await t.rollback();
       return res.render('publicaciones/crear', { error: 'Debés subir al menos una imagen', datosCompletados: req.body });
     }
 
-    // Crear publicación
     const nuevaPublicacion = await Publicacion.create({
-      titulo,
-      descripcion,
-      usuario_id,
-      activa: true,
-      comentarios_abiertos: true
+      titulo, descripcion, usuario_id, activa: true, comentarios_abiertos: true
     }, { transaction: t });
 
-    // Guardar imágenes
     for (const file of req.files) {
+      const resultado = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: 'fotaza' },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        stream.end(file.buffer);
+      });
+
       await Imagen.create({
         publicacion_id: nuevaPublicacion.id,
-        url: '/uploads/' + file.filename,
+        url: resultado.secure_url,
         licencia: licencia || 'sin_copyright',
         marca_agua: licencia === 'copyright' ? marca_agua : null
       }, { transaction: t });
     }
 
-    // Guardar etiquetas
     if (etiquetas) {
       const listaEtiquetas = etiquetas.split(',').map(e => e.trim().toLowerCase()).filter(e => e);
       for (const nombre of listaEtiquetas) {
@@ -52,7 +57,7 @@ exports.guardarPublicacion = async (req, res) => {
   } catch (error) {
     await t.rollback();
     console.error('Error al guardar publicación:', error);
-    res.render('publicaciones/crear', { error: 'Error al guardar la publicación: ' + error.message, datosCompletados: req.body });
+    res.render('publicaciones/crear', { error: 'Error al guardar: ' + error.message, datosCompletados: req.body });
   }
 };
 
@@ -74,22 +79,22 @@ exports.verDetalle = async (req, res) => {
       ]
     });
 
-    if (!publicacion) return res.status(404).render('404', { mensaje: 'Publicación no encontrada' });
+    if (!publicacion) return res.status(404).send('Publicación no encontrada');
 
-    // Si tiene imágenes con copyright y no está logueado, redirigir
     const tieneProtegidas = publicacion.imagenes.some(img => img.licencia === 'copyright');
-    if (tieneProtegidas && !usuarioLogueado) {
-      return res.redirect('/auth/login');
-    }
+    if (tieneProtegidas && !usuarioLogueado) return res.redirect('/auth/login');
 
-    // Calcular valoración promedio
-    const { Valoracion } = require('../models');
     for (const imagen of publicacion.imagenes) {
       const valoraciones = await Valoracion.findAll({ where: { imagen_id: imagen.id } });
       imagen.dataValues.promedio = valoraciones.length > 0
         ? (valoraciones.reduce((sum, v) => sum + v.valor, 0) / valoraciones.length).toFixed(1)
         : null;
       imagen.dataValues.totalVotos = valoraciones.length;
+
+      if (usuarioLogueado) {
+        const yaValoro = valoraciones.find(v => v.usuario_id === usuarioLogueado.id);
+        imagen.dataValues.miValoracion = yaValoro ? yaValoro.valor : null;
+      }
     }
 
     res.render('publicaciones/detalle', { publicacion, usuario: usuarioLogueado });
@@ -114,7 +119,6 @@ exports.agregarComentario = async (req, res) => {
     }
 
     await Comentario.create({ publicacion_id: id, usuario_id, texto: texto.trim() });
-
     res.redirect(`/publicaciones/${id}`);
 
   } catch (error) {
@@ -133,16 +137,15 @@ exports.valorarImagen = async (req, res) => {
       include: [{ model: Publicacion, as: 'publicacion' }]
     });
 
-    if (!imagen) return res.status(404).json({ error: 'Imagen no encontrada' });
+    if (!imagen) return res.redirect('/');
     if (imagen.publicacion.usuario_id === usuario_id) {
-      return res.status(400).json({ error: 'No podés valorar tu propia imagen' });
+      return res.redirect(`/publicaciones/${imagen.publicacion.id}`);
     }
 
     const yaValoro = await Valoracion.findOne({ where: { imagen_id, usuario_id } });
-    if (yaValoro) return res.status(400).json({ error: 'Ya valoraste esta imagen' });
+    if (yaValoro) return res.redirect(`/publicaciones/${imagen.publicacion.id}`);
 
     await Valoracion.create({ imagen_id, usuario_id, valor: parseInt(valor) });
-
     res.redirect(`/publicaciones/${imagen.publicacion.id}`);
 
   } catch (error) {

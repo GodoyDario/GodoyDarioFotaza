@@ -6,21 +6,23 @@
     "start": "node app.js",
     "dev": "node --watch app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:init": "node db/db-init.js"
+    "db:init": "node db/db-init.js",
+    "db:seed": "node db/seeders.js"
   },
   "author": "Godoy Dario",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "bcrypt": "^6.0.0",
-    "connect-session-sequelize": "^8.0.6",
-    "dotenv": "^17.4.2",
-    "express-session": "^1.19.0",
-    "multer": "^2.1.1",
-    "pg": "^8.21.0",
-    "pg-hstore": "^2.3.4",
+    "bcrypt": "6.0.0",
+    "cloudinary": "2.10.0",
+    "connect-session-sequelize": "8.0.6",
+    "dotenv": "17.4.2",
+    "express-session": "1.19.0",
+    "multer": "2.1.1",
+    "pg": "8.21.0",
+    "pg-hstore": "2.3.4",
     "pug": "3.0.4",
-    "sequelize": "^6.37.8",
+    "sequelize": "6.37.8",
     "xpress": "2.4.6"
   }
 }

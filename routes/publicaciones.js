@@ -5,20 +5,9 @@ const { EstaAutenticado } = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
 
-// Guardar imágenes en public/uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads/');
-  },
-  filename: function (req, file, cb) {
-    const nombreUnico = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, nombreUnico + path.extname(file.originalname));
-  }
-});
-
 const upload = multer({
-  storage: storage,
-  limits: { fileSize: 8 * 1024 * 1024 }, // 8 MB
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: function (req, file, cb) {
     const tiposPermitidos = /jpeg|jpg|png|gif|webp/;
     const esValido = tiposPermitidos.test(path.extname(file.originalname).toLowerCase());
@@ -28,7 +17,7 @@ const upload = multer({
       cb(new Error('Solo se permiten imágenes'));
     }
   }
-}).array('imagenes', 10); // múltiples imágenes
+}).array('imagenes', 10);
 
 router.get('/crear', EstaAutenticado, postController.mostrarFormulario);
 
@@ -49,10 +38,10 @@ router.post('/crear', EstaAutenticado, (req, res, next) => {
   });
 });
 
+router.post('/imagen/:imagen_id/valorar', EstaAutenticado, postController.valorarImagen);
+
 router.get('/:id', postController.verDetalle);
 
 router.post('/:id/comentar', EstaAutenticado, postController.agregarComentario);
-
-router.post('/imagen/:imagen_id/valorar', EstaAutenticado, postController.valorarImagen);
 
 module.exports = router;

@@ -5,11 +5,12 @@ block content
     h1= publicacion.titulo
     p
       strong Autor: 
-      span= publicacion.autor.username
+      a(href=`/usuarios/${publicacion.autor.id}`)= publicacion.autor.username
 
     if publicacion.descripcion
       p= publicacion.descripcion
 
+    //- Sección de Imágenes
     .imagenes
       each imagen in publicacion.imagenes
         .imagen-item
@@ -17,6 +18,7 @@ block content
           p
             strong Licencia: 
             span= imagen.licencia
+          
           if imagen.dataValues.promedio
             p
               strong Valoración: 
@@ -24,16 +26,22 @@ block content
           else
             p Sin valoraciones aún
 
+          //- Sistema de votación (visible solo para usuarios autenticados que no sean el autor)
           if usuario && usuario.id !== publicacion.autor.id
-            form(action=`/publicaciones/imagen/${imagen.id}/valorar` method="post")
-              select(name="valor")
-                option(value="1") 1
-                option(value="2") 2
-                option(value="3") 3
-                option(value="4") 4
-                option(value="5") 5
-              button(type="submit") Valorar
+            if imagen.dataValues.miValoracion
+              p.ya-valorado
+                | Ya valoraste con 
+                each val in [1, 2, 3, 4, 5]
+                  span(class=val <= imagen.dataValues.miValoracion ? 'estrella-llena' : 'estrella-vacia') ★
+            else
+              form.form-estrellas(action=`/publicaciones/imagen/${imagen.id}/valorar` method="post")
+                .estrellas-input
+                  each val in [5, 4, 3, 2, 1]
+                    input(type="radio" id=`star${val}-${imagen.id}` name="valor" value=`${val}`)
+                    label(for=`star${val}-${imagen.id}`) ★
+                button(type="submit") Valorar
 
+    //- Sección de Etiquetas (visible solo si hay etiquetas asociadas)
     if publicacion.etiquetas && publicacion.etiquetas.length > 0
       p
         strong Etiquetas: 
@@ -42,6 +50,7 @@ block content
 
     hr
 
+    //- Sección de Comentarios
     h2 Comentarios
     if publicacion.comentarios_abiertos
       if usuario

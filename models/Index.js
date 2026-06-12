@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
   }
 );
 
-// Importar modelos (con tus nombres de archivo actuales)
+// Importar modelos
 const Usuario = require('./Usuario')(sequelize);
 const Publicacion = require('./Post')(sequelize);
 const Imagen = require('./Image')(sequelize);
